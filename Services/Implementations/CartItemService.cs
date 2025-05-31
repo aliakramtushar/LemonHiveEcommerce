@@ -46,7 +46,6 @@ namespace LemonHiveEcommerce.Services.Implementations
             return result;
         }
 
-
         public async Task<bool> AddToCartAsync(Guid productId, int qty)
         {
             if (productId == Guid.Empty || qty <= 0)

@@ -1,7 +1,5 @@
 ﻿using LemonHiveEcommerce.Data;
-using LemonHiveEcommerce.Models;
 using LemonHiveEcommerce.Repositories.Interfaces;
-using System.Threading.Tasks;
 
 namespace LemonHiveEcommerce.Repositories.Implementation
 {

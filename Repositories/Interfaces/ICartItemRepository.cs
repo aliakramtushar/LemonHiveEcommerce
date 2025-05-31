@@ -6,6 +6,5 @@ namespace LemonHiveEcommerce.Repositories.Interfaces
 {
     public interface ICartItemRepository : IGenericRepository<CartItem>
     {
-        //Task<IEnumerable<CartItem>> GetLowStockProductsAsync(int threshold);
     }
 }

@@ -1,8 +1,6 @@
 ﻿using LemonHiveEcommerce.Data;
-using LemonHiveEcommerce.Models;
 using LemonHiveEcommerce.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace LemonHiveEcommerce.Repositories.Implementation
 {
@@ -31,12 +29,5 @@ namespace LemonHiveEcommerce.Repositories.Implementation
             if (entity != null)
                 _dbSet.Remove(entity);
         }
-
-        //public async Task<IEnumerable<Product>> GetWithRawSql()
-        //{
-        //    return await _context.Products.FromSqlRaw("SELECT * FROM Products").ToListAsync();
-        //}
-
     }
-
 }

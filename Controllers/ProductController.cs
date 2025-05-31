@@ -1,10 +1,6 @@
 ﻿using LemonHiveEcommerce.DTOs;
-using LemonHiveEcommerce.Models;
-using LemonHiveEcommerce.Services.Implementations;
 using LemonHiveEcommerce.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace LemonHiveEcommerce.Controllers
 {
@@ -21,13 +17,6 @@ namespace LemonHiveEcommerce.Controllers
 
         public async Task<IActionResult> Index(string search, int page = 1)
         {
-            //var products = await _productService.GetAllAsync();
-            //var cartItems = await _cartItemService.GetAllAsync();
-            //int cartItemCount = cartItems?.Sum(ci => ci.Qty) ?? 0;
-
-            //ViewData["CartItemCount"] = cartItemCount;
-            //return View(products);
-
             int pageSize = 5;
             var result = await _productService.GetPagedProductsAsync(search, page, pageSize);
 

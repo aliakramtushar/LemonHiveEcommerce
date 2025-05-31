@@ -1,6 +1,4 @@
-﻿using LemonHiveEcommerce.Models;
-
-namespace LemonHiveEcommerce.Repositories.Interfaces
+﻿namespace LemonHiveEcommerce.Repositories.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {

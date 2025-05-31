@@ -1,8 +1,6 @@
 ﻿using LemonHiveEcommerce.Data;
-using LemonHiveEcommerce.DTOs;
 using LemonHiveEcommerce.Models;
 using LemonHiveEcommerce.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace LemonHiveEcommerce.Repositories.Implementation
 {

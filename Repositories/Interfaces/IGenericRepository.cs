@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace LemonHiveEcommerce.Repositories.Interfaces
+﻿namespace LemonHiveEcommerce.Repositories.Interfaces
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {

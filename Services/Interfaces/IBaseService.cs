@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace LemonHiveEcommerce.Services.Interfaces
+﻿namespace LemonHiveEcommerce.Services.Interfaces
 {
     public interface IBaseService<TDto>
     {

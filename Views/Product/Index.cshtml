@@ -2,97 +2,85 @@
 @model IEnumerable<ProductDto>
 
 @{
-    ViewData["Title"] = "Product List";
+    ViewData["Title"] = "E-Bazaar";
+    var cartItemCount = ViewData["CartItemCount"] ?? 0;
 }
 
-<div class="container mt-5">
-    <h2>@ViewData["Title"]</h2>
+<div class="container mt-4">
 
-    <form method="get" asp-controller="Product" asp-action="Index">
-        <input type="text" name="search" value="@ViewData["Search"]" placeholder="Search..." />
-        <button type="submit">Search</button>
-    </form>
-
-    <div class="col end-0">
-        <a asp-action="Create" class="btn btn-primary">Add New Product</a>
-        <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary position-relative">
-            View Cart
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary"><i class="bi bi-shop"></i> E-Bazaar</h2>
+        <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-dark position-relative">
+            <i class="bi bi-cart-fill"></i> Cart
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                @ViewData["CartItemCount"]
+                @cartItemCount
             </span>
         </a>
     </div>
 
-    <div class="shadow p-3 mb-5 bg-white rounded">
-        <table class="table table-striped table-hover table-responsive">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Product Name</th>
-                    <th>Price</th>
-                    <th>Qty</th>
-                    <th class="align-items-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model != null && Model.Any())
-                {
-                    @foreach (var product in Model)
-                    {
-                        <tr>
-                            <td>
-                                @product.Id
-                            </td>
-                            <td>
-                                @product.ProductName
-                            </td>
-                            <td>
-                                @product.Price
-                            </td>
-                            <td>
-                                @product.Qty
-                            </td>
-                            <td>
-                                <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-warning">Edit</a>
-                                <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-info">Details</a>
-                                <a asp-action="Delete" asp-route-id="@product.Id" class="btn btn-danger">Delete</a>
-                                <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline">
-                                    <input type="hidden" name="productId" value="@product.Id" />
-                                    <input type="number" name="qty" value="1" />
-                                    <button type="submit" class="btn btn-success">Add to Cart</button>
-                                </form>
-
-                            </td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="5">
-                            There is no Products
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <!-- Stats Boxes -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Product : 100</h5>
+                    <p class="card-text">Warehouse has total of 100 product today & the max capacity is 200.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Total Vendor : 06</h5>
+                    <p class="card-text">A total of 6 out of 10 vendor are available for supply now.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Unique Product : 40</h5>
+                    <p class="card-text">Total number of products that are not duplicate or redundant.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- Search + Add Product -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <form method="get" class="d-flex w-50" asp-controller="Product" asp-action="Index">
+            <input type="text" name="search" value="@ViewData["Search"]" class="form-control me-2" placeholder="Search product..." />
+            <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+        </form>
+        <a asp-action="Create" class="btn btn-primary">+ Add Product</a>
+    </div>
 
-
-
-    <!-- pagination -->
-    @if ((int)ViewData["TotalPages"] > 1)
+    <!-- Product Grid -->
+    @if (Model != null && Model.Any())
     {
-        <nav>
-            <ul class="pagination">
-                @for (int i = 1; i <= (int)ViewData["TotalPages"]; i++)
-                {
-                    <li class="page-item @(i == (int)ViewData["CurrentPage"] ? "active" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-search="@ViewData["Search"]">@i</a>
-                    </li>
-                }
-            </ul>
-        </nav>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+            @foreach (var product in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <img src="https://via.placeholder.com/300x200?text=@product.ProductName" class="card-img-top" alt="@product.ProductName" />
+                        <div class="card-body">
+                            <h5 class="card-title">@product.ProductName</h5>
+                            <p class="card-text fw-bold">$@product.Price</p>
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex">
+                                <input type="hidden" name="productId" value="@product.Id" />
+                                <input type="number" name="qty" value="1" min="1" class="form-control me-2" style="width: 60px;" />
+                                <button type="submit" class="btn btn-sm btn-success">Add to cart</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">No products found.</div>
     }
 </div>

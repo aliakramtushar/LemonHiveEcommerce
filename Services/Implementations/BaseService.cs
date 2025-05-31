@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using LemonHiveEcommerce.Repositories.Interfaces;
 using LemonHiveEcommerce.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace LemonHiveEcommerce.Services.Implementations
 {
@@ -24,7 +21,6 @@ namespace LemonHiveEcommerce.Services.Implementations
         {
             get
             {
-                // This requires you to extend UnitOfWork or override in child services for each entity type.
                 throw new NotImplementedException("Override this property in child service to provide repository");
             }
         }
