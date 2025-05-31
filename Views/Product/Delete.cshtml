@@ -1,0 +1,42 @@
+﻿@using LemonHiveEcommerce.DTOs
+@model ProductDto
+
+@{
+    ViewData["Title"] = "Delete Product";
+}
+
+<div class="container mt-5">
+    <h2>@ViewData["Title"]</h2>
+    <div class="shadow p-3 mb-5 bg-white rounded">
+        <form asp-action="Delete" method="post">
+            <div class="flex-row">
+                <label asp-for="Id" class="col-form-label-lg"></label>
+                <input asp-for="Id" class="form-control" readonly />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+
+            <div class="flex-row">
+                <label asp-for="ProductName" class="col-form-label-lg"></label>
+                <input asp-for="ProductName" class="form-control" readonly />
+                <span asp-validation-for="ProductName" class="text-danger"></span>
+            </div>
+
+            <div class="flex-row">
+                <label asp-for="Price" class="col-form-label-lg"></label>
+                <input asp-for="Price" class="form-control" type="number" readonly />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="flex-row">
+                <label asp-for="Qty" class="col-form-label-lg"></label>
+                <input asp-for="Qty" class="form-control" type="number" readonly />
+                <span asp-validation-for="Qty" class="text-danger"></span>
+            </div>
+
+            <div class="flex-row mt-2">
+                <input type="submit" value="Delete" class="btn btn-danger " asp-action="Delete" />
+                <input type="submit" value="Back to List" class="btn btn-success " asp-action="Index" />
+            </div>
+        </form>
+    </div>
+</div>

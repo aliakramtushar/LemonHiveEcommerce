@@ -1,0 +1,38 @@
+﻿@using LemonHiveEcommerce.DTOs
+@model IEnumerable<CartItemDto>
+
+@{
+    ViewData["Title"] = "Your Cart";
+}
+
+<div class="container mt-5">
+    <h2>@ViewData["Title"]</h2>
+
+    @if (Model.Any())
+    {
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Qty</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.Qty</td>
+                        <td>@item.TotalPrice</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">Your cart is empty.</div>
+    }
+</div>
