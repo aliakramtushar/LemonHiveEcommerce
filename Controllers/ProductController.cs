@@ -1,5 +1,7 @@
 ﻿using LemonHiveEcommerce.DTOs;
+using LemonHiveEcommerce.Models;
 using LemonHiveEcommerce.Services.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LemonHiveEcommerce.Controllers
@@ -8,114 +10,205 @@ namespace LemonHiveEcommerce.Controllers
     {
         private readonly IProductService _productService;
         private readonly ICartItemService _cartItemService;
+        private IWebHostEnvironment _webHostEnvironment;
 
-        public ProductController(IProductService service, ICartItemService cartItemService)
+        public ProductController(IProductService service, ICartItemService cartItemService, IWebHostEnvironment webHostEnvironment)
         {
             _productService = service;
             _cartItemService = cartItemService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<IActionResult> Index(string search, int page = 1)
         {
-            int pageSize = 5;
-            var result = await _productService.GetPagedProductsAsync(search, page, pageSize);
+            try
+            {
+                int pageSize = 5;
+                var result = await _productService.GetPagedProductsAsync(search, page, pageSize);
 
-            ViewData["Search"] = search;
-            ViewData["CurrentPage"] = result.PageIndex;
-            ViewData["TotalPages"] = (int)Math.Ceiling((double)result.TotalCount / pageSize);
+                ViewData["Search"] = search;
+                ViewData["CurrentPage"] = result.PageIndex;
+                ViewData["TotalPages"] = (int)Math.Ceiling((double)result.TotalCount / pageSize);
 
-            var cartItems = await _cartItemService.GetAllAsync();
-            int cartItemCount = cartItems?.Sum(ci => ci.Qty) ?? 0;
+                var cartItems = await _cartItemService.GetAllAsync();
+                int cartItemCount = cartItems?.Sum(ci => ci.Qty) ?? 0;
 
-            ViewData["CartItemCount"] = cartItemCount;
+                ViewData["CartItemCount"] = cartItemCount;
 
-            return View(result.Items);
+                return View(result.Items);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error loading cart: {ex.Message}";
+                throw;
+            }
         }
 
         public IActionResult Create()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error loading cart: {ex.Message}";
+                throw;
+            }
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductDto product)
         {
-            if (!ModelState.IsValid)
-                return View(product);
+            try
+            {
+                if (!ModelState.IsValid) return View(product);
 
-            var result = await _productService.AddAsync(product);
-            if (result)
+                if (product.ImageFile != null)
+                {
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(product.ImageFile.FileName);
+                    string path = Path.Combine(wwwRootPath + "/assets/images", fileName);
+
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        await product.ImageFile.CopyToAsync(fileStream);
+                    }
+
+                    product.ImagePath = "/assets/" + fileName;
+                }
+
+                var result = await _productService.AddAsync(product);
+
+                TempData["successMessage"] = "Product created successfully.";
                 return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error loading cart: {ex.Message}";
 
-            ModelState.AddModelError("", "Failed to create product.");
+            }
             return View(product);
         }
 
+
         public async Task<IActionResult> Edit(Guid id)
         {
-            if (id == Guid.Empty)
-                return BadRequest();
+            try
+            {
+                if (id == Guid.Empty)
+                    return BadRequest();
 
-            var product = await _productService.GetByIdAsync(id);
-            if (product == null)
-                return NotFound();
+                var product = await _productService.GetByIdAsync(id);
+                if (product == null)
+                    return NotFound();
 
-            return View(product);
+                return View(product);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error loading cart: {ex.Message}";
+                throw;
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ProductDto product)
         {
-            if (id != product.Id)
-                return BadRequest();
+            try
+            {
+                if (id != product.Id)
+                    return BadRequest();
 
-            if (!ModelState.IsValid)
+                if (!ModelState.IsValid)
+                    return View(product);
+
+                var result = await _productService.UpdateAsync(product);
+                if (result)
+                {
+                    TempData["successMessage"] = "Product updated successfully.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                ModelState.AddModelError("", "Failed to update product.");
                 return View(product);
-
-            var result = await _productService.UpdateAsync(product);
-            if (result)
-                return RedirectToAction(nameof(Index));
-
-            ModelState.AddModelError("", "Failed to update product.");
-            return View(product);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error loading cart: {ex.Message}";
+                throw;
+            }
         }
 
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (id == Guid.Empty)
-                return BadRequest();
+            try
+            {
+                if (id == Guid.Empty)
+                    return BadRequest();
 
-            var product = await _productService.GetByIdAsync(id);
-            if (product == null)
+                var product = await _productService.GetByIdAsync(id);
+                if (product == null)
+                    return NotFound();
+
+                return View(product);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error loading cart: {ex.Message}";
                 return NotFound();
-
-            return View(product);
+            }
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var result = await _productService.DeleteAsync(id);
-            if (result)
-                return RedirectToAction(nameof(Index));
+            try
+            {
+                var result = await _productService.DeleteAsync(id);
+                if (result)
+                {
+                    TempData["successMessage"] = "Product updated successfully.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            TempData["errorMessage"] = "Failed to delete product.";
-            return RedirectToAction(nameof(Delete), new { id });
+                TempData["errorMessage"] = "Failed to delete product.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error loading cart: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         public async Task<IActionResult> Details(Guid id)
         {
-            if (id == Guid.Empty)
-                return BadRequest();
+            try
+            {
+                if (id == Guid.Empty)
+                {
+                    return BadRequest();
+                }
 
-            var product = await _productService.GetByIdAsync(id);
-            if (product == null)
-                return NotFound();
+                var product = await _productService.GetByIdAsync(id);
+                if (product == null)
+                {
+                    TempData["errorMessage"] = "No Product found";
+                    return NotFound();
+                }
 
-            return View(product);
+                return View(product);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error loading cart: {ex.Message}";
+                return View();
+            }
         }
     }
 }

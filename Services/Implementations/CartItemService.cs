@@ -41,6 +41,7 @@ namespace LemonHiveEcommerce.Services.Implementations
                              Qty = cart.Qty,
                              CreatedDate = cart.CreatedDate,
                              TotalPrice = cart.Qty * product.Price,
+                             ImagePath = product.ImagePath
                          };
 
             return result;

@@ -9,6 +9,7 @@ namespace LemonHiveEcommerce.DTOs
         public string ProductName { get; set; } = string.Empty;
         public int Qty { get; set; }
         public double TotalPrice { get; set; }
+        public string ImagePath {  get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
     }

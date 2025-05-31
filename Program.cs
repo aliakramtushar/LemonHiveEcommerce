@@ -21,11 +21,6 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 
 
-// Generic Base Service
-//builder.Services.AddScoped<IProductService, ProductService>();
-//builder.Services.AddScoped<ICartItemService, CartItemService>();
-
-// Services (you can add more like OrderService etc. here)
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartItemService, CartItemService>();
 
@@ -51,5 +46,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Product}/{action=Index}/{id?}");
+
+app.UseStaticFiles();
 
 app.Run();

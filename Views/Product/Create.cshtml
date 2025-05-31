@@ -9,7 +9,7 @@
 <div class="container mt-5">
     <h2>@ViewData["Title"]</h2>
     <div class="shadow p-3 mb-5 bg-white rounded">
-        <form asp-action="Create" method="post">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div class="flex-row">
                 <label asp-for="ProductName" class="col-form-label-lg"></label>
                 <input asp-for="ProductName" class="form-control" />
@@ -26,6 +26,11 @@
                 <label asp-for="Qty" class="col-form-label-lg"></label>
                 <input asp-for="Qty" class="form-control" type="number" />
                 <span asp-validation-for="Qty" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Upload Image</label>
+                <input type="file" name="ImageFile" class="form-control" />
             </div>
 
             <div class="flex-row mt-2">

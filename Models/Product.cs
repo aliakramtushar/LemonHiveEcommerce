@@ -21,6 +21,8 @@ namespace LemonHiveEcommerce.Models
         [Required]
         public int Qty { get; set; }
 
+        public string? ImagePath { get; set; }
+
         //public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
     }
 }

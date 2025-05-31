@@ -2,77 +2,62 @@
 @model IEnumerable<ProductDto>
 
 @{
-    ViewData["Title"] = "E-Bazaar";
-    var cartItemCount = ViewData["CartItemCount"] ?? 0;
+    ViewData["Title"] = "Product List";
 }
 
-<div class="container mt-4">
+<div class="container my-5">
 
-    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary"><i class="bi bi-shop"></i> E-Bazaar</h2>
-        <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-dark position-relative">
-            <i class="bi bi-cart-fill"></i> Cart
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                @cartItemCount
-            </span>
-        </a>
-    </div>
+        <h2>@ViewData["Title"]</h2>
 
-    <!-- Stats Boxes -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card text-white bg-primary">
-                <div class="card-body">
-                    <h5 class="card-title">Total Product : 100</h5>
-                    <p class="card-text">Warehouse has total of 100 product today & the max capacity is 200.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-info">
-                <div class="card-body">
-                    <h5 class="card-title">Total Vendor : 06</h5>
-                    <p class="card-text">A total of 6 out of 10 vendor are available for supply now.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-primary">
-                <div class="card-body">
-                    <h5 class="card-title">Unique Product : 40</h5>
-                    <p class="card-text">Total number of products that are not duplicate or redundant.</p>
-                </div>
-            </div>
+        <div>
+            <a asp-action="Create" class="btn btn-primary me-2">Add Product</a>
+            <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary position-relative">
+                View Cart
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    @ViewData["CartItemCount"]
+                </span>
+            </a>
         </div>
     </div>
 
-    <!-- Search + Add Product -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <form method="get" class="d-flex w-50" asp-controller="Product" asp-action="Index">
-            <input type="text" name="search" value="@ViewData["Search"]" class="form-control me-2" placeholder="Search product..." />
-            <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
-        </form>
-        <a asp-action="Create" class="btn btn-primary">+ Add Product</a>
-    </div>
+    <form method="get" asp-controller="Product" asp-action="Index" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="search" value="@ViewData["Search"]" class="form-control" placeholder="Search..." />
+            <button type="submit" class="btn btn-outline-secondary">Search</button>
+        </div>
+    </form>
 
-    <!-- Product Grid -->
     @if (Model != null && Model.Any())
     {
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
             @foreach (var product in Model)
             {
                 <div class="col">
                     <div class="card h-100 shadow-sm">
-                        <img src="https://via.placeholder.com/300x200?text=@product.ProductName" class="card-img-top" alt="@product.ProductName" />
-                        <div class="card-body">
+                        @* <img src="@product.ImagePath" class="card-img-top" style="height: 200px; object-fit: cover;" alt="@product.ProductName" /> *@
+
+                        @if (!string.IsNullOrEmpty(product.ImagePath))
+                        {
+                            <img src="@product.ImagePath" alt="@product.ProductName" width="80" />
+                        }
+                        
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title">@product.ProductName</h5>
-                            <p class="card-text fw-bold">$@product.Price</p>
-                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex">
-                                <input type="hidden" name="productId" value="@product.Id" />
-                                <input type="number" name="qty" value="1" min="1" class="form-control me-2" style="width: 60px;" />
-                                <button type="submit" class="btn btn-sm btn-success">Add to cart</button>
-                            </form>
+                            <p class="card-text">
+                                <strong>$@product.Price</strong>
+                            </p>
+                            <div class="mt-auto">
+                                <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                    <input type="hidden" name="productId" value="@product.Id" />
+                                    <div class="input-group mb-2">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="adjustQty(this, -1)">-</button>
+                                        <input type="number" name="qty" class="form-control text-center" value="1" min="1" />
+                                        <button class="btn btn-outline-secondary" type="button" onclick="adjustQty(this, 1)">+</button>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100">Add to Cart</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -81,6 +66,37 @@
     }
     else
     {
-        <div class="alert alert-info">No products found.</div>
+        <div class="alert alert-info mt-4">
+            There are no products available.
+        </div>
     }
 </div>
+
+
+
+
+<!-- pagination -->
+@if ((int)ViewData["TotalPages"] > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (int i = 1; i <= (int)ViewData["TotalPages"]; i++)
+            {
+                <li class="page-item @(i == (int)ViewData["CurrentPage"] ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-search="@ViewData["Search"]">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+@section Scripts {
+    <script>
+        function adjustQty(button, change) {
+            const input = button.parentElement.querySelector('input[name="qty"]');
+            let value = parseInt(input.value) || 1;
+            value = Math.max(1, value + change);
+            input.value = value;
+        }
+    </script>
+}
