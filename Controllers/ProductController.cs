@@ -77,7 +77,7 @@ namespace LemonHiveEcommerce.Controllers
                         await product.ImageFile.CopyToAsync(fileStream);
                     }
 
-                    product.ImagePath = "/assets/" + fileName;
+                    product.ImagePath = "/assets/images/" + fileName;
                 }
 
                 var result = await _productService.AddAsync(product);
